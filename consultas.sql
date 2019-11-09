@@ -24,3 +24,9 @@ FROM
 				FROM clientes
 				GROUP BY ciudad) AS X) AS Y	
 ON Y.ndc = X.numeroDeClientes;
+
+-- 4. El total de productos por categoría con los que cuenta cada proveedor.
+SELECT X.idProvedor, X.idCategoria, X.numeroDeProductos 
+FROM 	(SELECT idProvedor, idCategoria, COUNT(idCategoria) AS numeroDeProductos
+		FROM productos
+		GROUP BY idProvedor, idCategoria) AS X;
