@@ -32,6 +32,20 @@ FROM 	(SELECT idProvedor, idCategoria, COUNT(idCategoria) AS numeroDeProductos
 		GROUP BY idProvedor, idCategoria) AS X;
 
 -- 5. La compañia de envíos que más pedidos ha despachado de la categoría 'Dairy Products'
+SELECT TOP(1) idCompaniaEnvio
+FROM 	(SELECT X.idCompaniaEnvio, COUNT(X.idCompaniaEnvio) AS numeroDeEnvios
+		FROM	(SELECT DISTINCT P.idPedido, P.viaEnvio AS idCompaniaEnvio
+				FROM 	Pedidos P
+						JOIN
+						DetallesPedido DP
+						ON P.idPedido = DP.idPedido
+						JOIN
+						Productos Pr
+						ON DP.idProducto = Pr.idProducto
+				WHERE Pr.idCategoria = (SELECT idCategoria FROM  categorias WHERE nombreCategoria = 'Dairy Products')) 
+				AS X
+		GROUP BY X.idCompaniaEnvio) AS X
+ORDER BY X.numeroDeEnvios DESC;
 
 -- 6. La región que más empleados tiene.
 SELECT X.idRegion, COUNT(X.idEmpleado) AS numeroDeEmpleados
