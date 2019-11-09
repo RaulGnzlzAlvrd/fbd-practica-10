@@ -30,3 +30,14 @@ SELECT X.idProvedor, X.idCategoria, X.numeroDeProductos
 FROM 	(SELECT idProvedor, idCategoria, COUNT(idCategoria) AS numeroDeProductos
 		FROM productos
 		GROUP BY idProvedor, idCategoria) AS X;
+
+-- 5. La compañia de envíos que más pedidos ha despachado de la categoría 'Dairy Products'
+
+-- 6. La región que más empleados tiene.
+SELECT X.idRegion, COUNT(X.idEmpleado) AS numeroDeEmpleados
+FROM	(SELECT DISTINCT idRegion, idEmpleado
+		FROM 	territorios T
+				INNER JOIN
+				territoriosEmpleado E
+				ON E.idTerritorio = T.idTerritorio) AS X
+GROUP BY X.idRegion;
