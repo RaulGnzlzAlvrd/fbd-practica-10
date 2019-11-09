@@ -11,3 +11,16 @@ SELECT E.idEmpleado, NumEmpleados.numeroDeEmpleados FROM
 		FROM empleados 
 		GROUP BY reportaAEmpleado) AS NumEmpleados
 	ON E.idEmpleado = NumEmpleados.idEmpleado;
+
+-- 3. Nombre de la ciudad que tiene más clientes.
+SELECT X.ciudad
+FROM 	
+		(SELECT ciudad, COUNT(ciudad) AS numeroDeClientes
+		FROM clientes
+		GROUP BY ciudad) AS X
+		JOIN
+		(SELECT MAX(X.numeroDeClientes) AS ndc
+		FROM 	(SELECT COUNT(ciudad) AS numeroDeClientes
+				FROM clientes
+				GROUP BY ciudad) AS X) AS Y	
+ON Y.ndc = X.numeroDeClientes;
