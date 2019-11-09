@@ -3,7 +3,7 @@ USE Northwind;
 -- 1. El número de empleados que existen por cada puesto.
 
 SELECT titulo, COUNT(idEmpleado)
-FROM	Empleados
+FROM Empleados
 GROUP BY titulo;
 
 -- 2. El número de empleados que tiene a su cargo cada empleado.
@@ -14,29 +14,21 @@ SELECT E.idEmpleado,
        END     
 FROM empleados AS E
      LEFT JOIN
-    (SELECT reportaAEmpleado AS idEmpleado, COUNT(reportaAEmpleado) AS numeroDeEmpleados
-      FROM empleados
-      GROUP BY reportaAEmpleado) AS NumEmpleados
-	  ON E.idEmpleado = NumEmpleados.idEmpleado;
+        (SELECT reportaAEmpleado AS idEmpleado, COUNT(reportaAEmpleado) AS numeroDeEmpleados
+         FROM empleados
+         GROUP BY reportaAEmpleado) AS NumEmpleados
+	   ON E.idEmpleado = NumEmpleados.idEmpleado;
 
--- 3. Nombre de la ciudad que tiene más clientes.
-SELECT X.ciudad
-FROM
-		(SELECT ciudad, COUNT(ciudad) AS numeroDeClientes
-		FROM clientes
-		GROUP BY ciudad) AS X
-		JOIN
-		(SELECT MAX(X.numeroDeClientes) AS ndc
-		FROM 	(SELECT COUNT(ciudad) AS numeroDeClientes
-				FROM clientes
-				GROUP BY ciudad) AS X) AS Y
-ON Y.ndc = X.numeroDeClientes;
+-- 3. Nombre de la ciudades que tienen más de un cliente.
+SELECT ciudad
+FROM Clientes
+GROUP BY clientes
+HAVING count(idCliente) > 1;
 
 -- 4. El total de productos por categoría con los que cuenta cada proveedor.
-SELECT X.idProvedor, X.idCategoria, X.numeroDeProductos
-FROM 	(SELECT idProvedor, idCategoria, COUNT(idCategoria) AS numeroDeProductos
-		FROM productos
-		GROUP BY idProvedor, idCategoria) AS X;
+SELECT idProvedor, idCategoria, COUNT(idProducto) AS numeroDeProductos
+FROM Productos
+GROUP BY idProvedor, idCategoria;
 
 -- 5. La compañia de envíos que más pedidos ha despachado de la categoría 'Dairy Products'
 SELECT TOP(1) idCompaniaEnvio
