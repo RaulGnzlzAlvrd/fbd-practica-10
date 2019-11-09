@@ -2,19 +2,26 @@ USE Northwind;
 
 -- 1. El número de empleados que existen por cada puesto.
 
+SELECT titulo, COUNT(idEmpleado)
+FROM	Empleados
+GROUP BY titulo;
+
 -- 2. El número de empleados que tiene a su cargo cada empleado.
--- TODO: Falta poner 0 cuando es null.
-SELECT E.idEmpleado, NumEmpleados.numeroDeEmpleados FROM 
-	empleados AS E
-	LEFT JOIN 
-	(SELECT reportaAEmpleado AS idEmpleado, COUNT(reportaAEmpleado) AS numeroDeEmpleados 
-		FROM empleados 
-		GROUP BY reportaAEmpleado) AS NumEmpleados
-	ON E.idEmpleado = NumEmpleados.idEmpleado;
+
+SELECT E.idEmpleado, 
+       CASE WHEN NumEmpleados.numeroDeEmpleados IS NULL THEN 0 
+            ELSE NumEmpleados.numeroDeEmpleados
+       END     
+FROM empleados AS E
+     LEFT JOIN
+    (SELECT reportaAEmpleado AS idEmpleado, COUNT(reportaAEmpleado) AS numeroDeEmpleados
+      FROM empleados
+      GROUP BY reportaAEmpleado) AS NumEmpleados
+	  ON E.idEmpleado = NumEmpleados.idEmpleado;
 
 -- 3. Nombre de la ciudad que tiene más clientes.
 SELECT X.ciudad
-FROM 	
+FROM
 		(SELECT ciudad, COUNT(ciudad) AS numeroDeClientes
 		FROM clientes
 		GROUP BY ciudad) AS X
@@ -22,11 +29,11 @@ FROM
 		(SELECT MAX(X.numeroDeClientes) AS ndc
 		FROM 	(SELECT COUNT(ciudad) AS numeroDeClientes
 				FROM clientes
-				GROUP BY ciudad) AS X) AS Y	
+				GROUP BY ciudad) AS X) AS Y
 ON Y.ndc = X.numeroDeClientes;
 
 -- 4. El total de productos por categoría con los que cuenta cada proveedor.
-SELECT X.idProvedor, X.idCategoria, X.numeroDeProductos 
+SELECT X.idProvedor, X.idCategoria, X.numeroDeProductos
 FROM 	(SELECT idProvedor, idCategoria, COUNT(idCategoria) AS numeroDeProductos
 		FROM productos
 		GROUP BY idProvedor, idCategoria) AS X;
@@ -42,7 +49,7 @@ FROM 	(SELECT X.idCompaniaEnvio, COUNT(X.idCompaniaEnvio) AS numeroDeEnvios
 						JOIN
 						Productos Pr
 						ON DP.idProducto = Pr.idProducto
-				WHERE Pr.idCategoria = (SELECT idCategoria FROM  categorias WHERE nombreCategoria = 'Dairy Products')) 
+				WHERE Pr.idCategoria = (SELECT idCategoria FROM  categorias WHERE nombreCategoria = 'Dairy Products'))
 				AS X
 		GROUP BY X.idCompaniaEnvio) AS X
 ORDER BY X.numeroDeEnvios DESC;
