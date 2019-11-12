@@ -1,0 +1,51 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{fullpage}
+\usepackage[top=2cm, bottom=4.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{hyperref}
+
+
+\pagestyle{fancyplain}
+\headheight 35pt
+\rhead{\today}
+\lhead{Fundamentos de Bases de Datos}
+\headsep 1.5em
+
+\begin{document}
+
+\begin{center}
+	\LARGE{\textbf{Práctica 10\\Reporte}}
+\end{center}
+
+\section*{Descripción de la Solución de los Ejercicios}
+\begin{enumerate}[label=\arabic*.]
+\item Para esta consulta lo único que hicimos fue contar los idEmpleado agrupando por título.
+\item En esta consulta lo que hicimos fue utilizar una subconsulta para contar el número de idEmpleado agrupando por supervisor. Luego hicimos Join Externo con Empleado para que todos los idEmpleado tuvieran la cuenta que se hizo y aplicamos CASE para dar el formato de 0 cuando apareciera NULL (que significa que no contamos ningún empleado supervisado por él).
+\item Para la tercer consulta solamente seleccionamos la ciudad de la tabla clientes en donde el conteo de idCliente agrupando por ciudad fuera mayor a 1. Para agregar esta última condición usamos HAVING.
+\item La cuarta consulta requería que agruparamos por provedor y categoría, y con esta agrupación hicimos el conteo de los idProducto.
+\item Esta consulta ya fue más complicada. Lo primero que tuvimos que hacer fue ocupar una subconsulta donde obtuviéramos el idCategoría de `Dairy Products'. Una vez que tuvimos esta, la utilizamos en la cláusula WHERE de otra subconsulta donde hicimos el JOIN Natural de Pedidos con DetallesPedido y Producto; verificamos que la categoría del producto fuera la que habíamos obtenido.\\
+De esta relación seleccionamos los pares distintos de idPedido, y viaEnvio. Por último, hicimos el conteo de las tuplas agrupando por las compañías de envío (víaEnvío), ordenamos el resultado por el mayor número del conteo (que representa al número de envíos) en orden descendiente y seleccionamos a la compañía que aparece en la primer tupla, usando la función TOP(1).
+\item Para la sexta consulta, como queríamos información de Empleados relacionada con regiones tuvimos que trabajar con la tabla que es el JOIN Natural de TerritoriosEmpleado y Territorios. Esta la obtuvimos mediante una sibconsulta. En esta teníamos ya el idRegion y el idEmpleado relacionados. \\
+A continuación sólo hicimos el agrupamiento por región y ordenamos de manera descendiente el conteo de los empleados. Por último, seleccionamos la región de la primer columna haciendo uso de TOP(1).
+\item Para esta consulta lo que hay que notar es que en DetallesPedido se separa la información de cada Pedido por Productos que se pidieron en el pedido. De cada uno de ellos se detalla el precio unitario, la cantidad pedida y el procentaja de descuento. Entonces, para calcular el costo total de un producto en un pedido lo que se tiene que calcular es: 
+\begin{equation*}
+precioUnitario*cantidad*(1-descuento)
+\end{equation*}
+Entonces, para obtener el costo total del pedido hay que sumar esta cantidad con la función SUM, agrupando por el idPedido.\\
+Una vez que se tiene esto, podemos ordenar de forma descendiente por el costo del Pedido y seleccionar los idCliente que aparecen en las primeras 10 tuplas (con TOP(10)). Una vez que tenemos estos id, para obtener los nombres solo hay que hacer un JOIN con Clientes con la condición de que el id de la subconsulta coincida con el id de la tabla Clientes. 
+\item Para esta consulta de nuevo tuvimos que tomar en cuenta la fórmula que describimos para obtener el costo por producto y por pedido ($precioUnitario*cantidad*(1-descuento)$), pero ahora nos interesa agrupar por producto, no por pedido, así que hacemos la suma con dicha agrupación. Una vez que tenemos esto, que sería la ganancia por prodcuto de los proveedores, para recuperar la categoría hacemos un JOIN Natural con Productos, y de esta relación hacemos la suma de las ganancias por producto agrupando por idProvedor y idCategoria.
+\item Para esta consulta de nuevo nos basamos en la función TOP(1). Lo que hicimos fue: de uns subconsulta en la que seleccionamos sólo a los productos descontinuados, agrupamos por idProvedor y hacemos el conteo de las tuplas que aparecen por cada Proveedor; ordenamos de manera descendiente por dicho conteo y seleccionamos a la primer tupla.
+\item Para la décima consulta primero consideramos las ganancias como los cargos aplicados por el envío, pues lo demás serían ganancias de los proveedores, no de la compañía Northwind. A continuación, lo que hicimos fue agrupar por YEAR(fechaPedido) y MONTH(fechaPedido), y hacer el conteo de los idPedido bajo esta agrupación y la suma de los cargos. Todo esto sobre la tabla Pedidos. \\
+Así, en el SELECT sólo quedaron los atributos calculados para el año, el mes, el conteo de pedidos y la suma de los cargos. 
+\end{enumerate}
+
+\end{document}

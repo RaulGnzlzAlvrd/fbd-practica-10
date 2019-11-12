@@ -2,7 +2,7 @@ USE Northwind;
 
 -- 1. El número de empleados que existen por cada puesto.
 
-SELECT titulo, COUNT(idEmpleado)
+SELECT titulo, COUNT(idEmpleado) EmpleadosPorPuesto
 FROM Empleados
 GROUP BY titulo;
 
@@ -62,13 +62,18 @@ ORDER BY COUNT(X.idEmpleado) DESC;
 
 -- 7. Obtener el nombre de los clientes que han realizado los 10 pedidos más caros, ordenar el resultado por el pedido con más valor.
 
-SELECT C.nombreCompania
-FROM Clientes C
+SELECT C.nombreCompania, Y.costoTotal
+FROM   Clientes C
 JOIN
-    (SELECT TOP 10 idCliente, cargo
-     FROM Pedidos
-     ORDER BY cargo DESC) AS X 
-ON X.idCliente = C.idCliente;
+       (SELECT  TOP(10) P.idCliente, costoTotal
+        FROM    Pedidos P
+        JOIN 
+               (SELECT idPedido, SUM(precioUnitario*cantidad*(1-descuento)) costoTotal
+	              FROM DetallesPedido DP
+	              GROUP BY DP.idPedido) AS X
+        ON P.idPedido = X.idPedido
+        ORDER BY costoTotal DESC) AS Y 
+ON Y.idCliente = C.idCliente;
 
 -- 8. Las ganancias por categorías que se han obtenido todos los proveedores.
 SELECT idProvedor, P.idCategoria, SUM(X.Ganancia)
