@@ -22,7 +22,7 @@ FROM empleados AS E
 -- 3. Nombre de la ciudades que tienen más de un cliente.
 SELECT ciudad
 FROM Clientes
-GROUP BY clientes
+GROUP BY ciudad
 HAVING count(idCliente) > 1;
 
 -- 4. El total de productos por categoría con los que cuenta cada proveedor.
